@@ -1,0 +1,218 @@
+NOTES
+
+
+
+Sharing behavior for portal users
+Account and case access—An account’s portal user has Read Only access to the parent account and to all of the account’s contacts.
+Management access to data owned by Service Cloud portal users—Since Service Cloud portal users don't have roles, portal account owners can't access their data via the role hierarchy. To grant them access to this data, you can add account owners to the portal’s share group where the Service Cloud portal users are working. This step provides access to all data owned by Service Cloud portal users in that portal.
+Case access—If a portal or customer community plus user is a contact on a case, then the user has Read and Write access on the case.
+
+
+
+
+
+If a user on an account team has Read/Write access (Account Access, Contact Access, Opportunity Access, and Case Access) and is deactivated, the access will default to Read Only if the user is reactivated.
+
+
+In Account Teams, Contact Access is not available when the organization-wide default for contacts is set to Controlled by Parent.
+
+
+
+The default external access level must be more restrictive or equal to the default internal access level. For example, you can have a custom object with default external access set to Private and default internal access set to Public Read Only.
+
+
+With Shield Platform Encryption, you can encrypt a variety of widely used standard fields, along with some custom fields and many kinds of files. Shield Platform Encryption also supports person accounts, cases, search, approval processes, and other key Salesforce features. Classic encryption lets you protect only a special type of custom text field, which you create for that purpose- text (175 )
+
+
+
+Enterprise Territory Management gives reps access to accounts based on criteria such as postal code, industry, revenue, or a custom field. And with Enterprise Territory Management:
+Salesforce admins can set up and test territory models before implementing them.
+It’s easy to make assignments between territories, accounts, and opportunities.
+Reports help teams organize for optimal coverage and assess territory effectiveness.
+
+
+From the hierarchy, you can also assign territories to opportunities, run assignment rules at the model level, and activate or archive the model.
+
+Territory can be in planning stage, in active use, or archived. You can have only one active territory model at a time, but you can create and maintain multiple models in planning or archived state to use for additional modeling or reference.
+
+
+
+Ownership skews are similar to data skews, except if we are referring to a single user, role, or group owning a large number of records
+for an object. As with data skews, these can also cause long running transactions, causing a performance degradation when change
+occurs. The recommended ratio of owner to number of records is also 1:10,000.
+If a single user owns more than 10,000 records, as a best practice:
+• The user record of the owner should not hold a role in the role hierarchy.
+• If the owner's user record must hold a role, the role should be at the top of the hierarchy in its own branch of the role hierarchy.
+
+~~~~~~~~~~~~~~~
+
+IDENTITY
+
+
+Here are the three protocols that Salesforce and other identity vendors follow to implement identity solutions.	
+SAML
+OAuth 2.0
+OpenID Connect
+
+
+When you want users to move seamlessly between Salesforce orgs and applications without logging in repeatedly, you set up single sign-on (SSO). Security Assertion Markup Language (SAML) is the protocol that makes it happen. SAML is an XML-based protocol
+
+OAuth 2.0 is an open protocol used to allow secure data sharing between applications. The user works in one app but sees the data from another. For example, you’re logged in to your Salesforce mobile app and see your data from your Salesforce org.
+the apps perform a kind of handshake and then ask the user to authorize this data sharing. When developers want to integrate their app with Salesforce, they use OAuth APIs.
+
+Like SAML, OpenID Connect is a protocol based on OAuth 2.0 that sends identity information from one service to another. Unlike SAML, OpenID Connect is built for today’s world of social networks.
+The advantage of the OpenID Connect protocol for users is that they can reduce the number of separate accounts, usernames, and passwords. On the flip side, developers can authenticate their users across websites and apps without having to own and manage password files. This process makes it that much harder for hackers to compromise user accounts
+
+
+What’s the difference between an identity provider and a service provider? Basically, the identity provider is the one authenticating the user. The service provider is asking for the authenticated identity.
+
+In the process of authenticating users, SAML exchanges identity information between the holder of the information, called an identity provider (IdP), and the desired service, called a service provider.
+In the case where a user logs in to Salesforce and then accesses Gmail, Salesforce is the identity provider, and Google is the service provider. Salesforce can be both a service provider and identity provider.
+
+Authenticated users can also flow from Salesforce to other clouds and apps. In this case, Salesforce acts as an identity provider and provides SSO for users to connect to different service providers.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Communities- 
+
+LICENCES - 
+CC , 
+CC+,(reports and dashboards, Delegated admin, Content libraries , Records across accounts) 
+PC (leads , opptys campaigns)
+
+Why is a share group needed when various record access capabilities are available in Salesforce? Most of those capabilities (record access via a role hierarchy, criteria-based sharing rules, manual sharing, team sharing) are not available for the Customer Community License because they require a role within the Salesforce hierarchy.
+
+Customer Community Licenses can’t have roles.
+
+Share groups fill in the gap by letting you open up record access of records owned by Customer Community License holders.
+
+A sharing set gives community users access to records that are associated with their accounts or contacts based on their user profiles.
+
+The admin can set up only one sharing set per profile per object.
+
+A sharing set grants users access to any record associated with an account or contact that matches the user’s account or contact. You can also grant access to records via access mapping in a sharing set, which supports indirect lookups from the user and target record to the account or contact. For example, grant users access to all cases related to an account that’s identified on the users’ contact records.
+
+Sharing sets apply across all communities a community user is a member of.
+
+High-volume users are limited-access users intended for organizations with many thousands to millions of external users. Unlike other external users, high-volume users don’t have roles, which eliminates performance issues associated with role hierarchy calculations. Because high-volume community users are not in the role hierarchy while Salesforce users are, a share group allows you to specify the Salesforce other external users who can access records owned by high-volume community users.
+
+Share groups apply across communities.
+
+
+
+~~~~~~~~~~~~
+By keeping the following core principles in mind, you can ensure that you architect your group sharing to obtain peak performance:
+
+Moving users from one group to another trigger organization wide group membership locks, so highly dynamic groups can have a negative impact on performance.
+The use case which will provide peak performance includes a group of users who share the same visibility and don’t frequently move from one group to another via an automated process.
+The sharing performance benefit will decrease as the number of group members decreases, and the frequency of user movement within the groups increases.
+
+
+
+
+
+~~~~~~~~
+The Impact of Account Data Skew
+To understand the impact of account data skew, consider the following scenario. User Jane has access to contact Bob Smith and has a parent share to the single generic account. Her manager changes ownership of the contact Bob Smith to another salesperson and clicks Save.
+
+The sharing calculations now run for a longer period of time because they have to determine whether to delete the parent implicit share. The calculations check if Jane has access to the remaining 299,999 contacts under the single generic account.
+
+If another salesperson tries to add a new contact for the same account while the sharing calculations are occurring, that request will wait for Force.com to release the lock on the account, resulting in lock contention and reduced database concurrency. Because this is a synchronous request, this request starts counting against the concurrent Apex request limit if the wait exceeds 5 seconds. If the wait exceeds 10 seconds, the salesperson will get an “UNABLE_TO_LOCK_ROW” error.
+
+How to Avoid Account Data Skew
+You should always strive to identify and avoiding account data skew situations. Correcting a data skew can be painful because you’re changing ownership, which in turn triggers sharing calculations.
+
+Design architecture to limit account objects to 10,000 children. Some possible methods include creating a pool of Accounts and assigning children in a round robin fashion or using Custom Settings for the current Account and the number of children.
+If possible, consider a Public Read/Write sharing model in which the parent account stays locked, but sharing calculations don’t occur.
+If you have a skewed account, redistribute child objects in chunks during off-peak hours to lessen the impact of record-level lock contention.  Batch Apex or the Bulk API are useful ways to re-parent.
+
+
+If you do have a compelling reason for assigning ownership to a small number of users, you can minimize possible performance impacts
+by not assigning the user(s) to a role.
+If the user(s) must have a role to share data, we recommend that you:
+• Place them in a separate role at the top of the hierarchy
+• Not move them out of that top-level role
+• Keep them out of public groups that could be used as the source for sharing rules
+
+
+
+~~~~~~~~~~~~~~~~
+Apex and Visualforce Applications
+There are multiple ways to protect sensitive data within Force.com, depending on the type of secret being stored, who should have access, and how the secret should be updated.
+
+Protected Custom Metadata Types
+
+Within a namespaced managed package, protected custom metadata types are suitable for storing authentication data and other secrets. Custom metadata types can also be updated via the metadata api in the organization that created the type, and can be read (but not updated) at runtime via SOQL code within an apex class in the same namespace as the metadata type. Secrets which are common across all users of the package (such as an API key) needs to be stored in Managed Protected Custom Metadata Types. Secrets should never be hardcoded in the package code or displayed to the user.
+
+For more information, see the Custom Metadata Implementation Guide
+
+Protected Custom Settings
+
+Custom settings enable application developers to create custom sets of data, as well as create and associate custom data for an organization, profile, or specific user. However, setting the visibility of the Custom Setting Definition to “Protected” and including it in a managed package ensures that it’s only accessible programmatically via Apex code that exists within your package. This is useful for secrets that need to generated at install time or initialized by the admin user.
+
+Unlike custom metadata types, custom settings can be updated at runtime in your Apex class, but cannot be updated via the Metadata Api.
+
+In order to allow authorized users to create and update sensitive information in the UI, create a Visualforce page that only accepts input and does not render the value back on the page. The “transient” keyword should be used to declare instance variables within Visualforce controllers to ensure they are not transmitted as part of the view state. Please refer to the following link for details: transient keyword
+
+Finally, configure the security settings for this page to ensure it’s only accessible by limited profiles on an as needed basis.
+
+
+Apex Crypto Functions
+
+The Apex crypto class provides algorithms for creating digests, MACs, signatures and AES encryption. When using the crypto functions to implement AES encryption, keys must be generated randomly and stored securely in a Protected Custom Setting or Protected Custom Metadata type. Never hardcode the key in within an Apex class.
+
+For more information and examples for implementing the crypto class, please visit: apex crypto classes
+
+Encrypted Custom Fields
+
+Encrypted custom fields are text fields that can contain letters, numbers, or symbols but are encrypted with 128-bit keys and use the AES algorithm. The value of an encrypted field is only visible to users that have the “View Encrypted Data” permission. We do not recommend storing authentication data in encrypted custom fields, however these fields are suitable for storing other types of sensitive data (credit card information, social security numbers, etc).
+
+Named Credentials
+
+Named Credentials are a safe and secure way of storing authentication data for external services called from your apex code such as authentication tokens. We do not recommend storing other types of sensitive data in this field (such as credit card information). Be aware that users with customize application permission can view named credentials, so if your security policy requires that the secrets be hidden from subscribers, then please use a protected custom metadata type or protected custom setting.
+~~~~~~~~~~~~~~~~~
+
+
+The basis for this architectural strategy is to identify your business critical operations which must not be impacted by group membership lock exceptions.  All other competing operations which take a significant amount of time to complete must be processed serially, tuned and batched to ensure locks are not held longer than 10 seconds.  This ensures that your business critical operations will never have to wait long enough to produce an exception.  Here are the steps to setup this type of architecture:
+
+1      Identify your business critical operations which must not be impacted by group membership lock exceptions.
+
+If operations are processed asynchronously and transaction time and load cause group membership lock exceptions by themselves, these operations will need to be tuned or processed synchronously relative to each other.  If this is an end user driven synchronous operation, individual requests may need to be batched and performed in ‘near real time’ so they don’t lock each other.
+2      Evaluate which operations will compete for locks with your business critical operations. If you have the Granular Locking feature enabled, some group membership operations may proceed at the same time as your critical operations (contact Support to enable this feature). Possibilities are:
+
+Operations that only hold locks for a trivial amount of time (will not compete)
+All other Operations when Granular Locking is not enabled (will compete)
+Operations that can proceed in parallel under Granular Locking (will not compete)
+Operations that cannot proceed in parallel under Granular Locking (will compete)
+3      Once you have identified which operations compete with your business critical operations, you can arrange the competing operations to be performed serially under the following conditions:
+
+Tune code and batch size of these operations to ensure group membership locks are never held longer than 10 seconds.
+Retry logic can be implemented for competing operations in case the business critical operation locks one of the competing operations.
+4      Trim code related to business critical and competing operations which process group membership locks so that they perform only what is required for the group membership operation.  Additional code executed within the transaction holds the lock when the lock is not needed increasing the probability of exceptions.
+
+ 
+
+Many organizations have user driven group membership changes which can compete with your business critical operations.  Since these changes cannot be throttled, business process should be implemented to perform significant changes during maintenance windows. 
+
+
+~~~~~~~~~~~
+
+Sharing records
+Owned by high-volume community users (who don’t have roles) to internal and external users – share groups are your friends!
+To high-volume community users (who don’t have roles) – sharing sets for the win! (“A sharing set grants high-volume users access to any record associated with an account or contact that matches the user’s account or contact.”)
+
+
+
+ Sharing sets are geared towards sharing records owned by other users with Community users. Share Groups, on the other hand, allow you to go the other direction and share records owned by Community users with other users. You can use share groups to share records owned by an external user (with a Customer Community or High-Volume Customer Portal License) with internal users, partner users, or other high-volume external users in the same account.
+
+
+
+~~~~~~~~~~~~~
+
+
+Granular Locking – when you make changes to roles and groups Salesforce locks the entire group membership table, which makes it impossible to process group changes in multiple threads to increase throughput on updates. Once you request enablement of this feature from Salesforce you can process some of updates simultaneously if there is no hierarchical or other relationship between the roles or groups involved in the updates.
+Deferred Sharing – imagine you have to rebuild the whole role hierarchy. If you have millions of records each change to the role hierarchy and group membership can take significant time as Salesforce has to recalculate the access to records. Instead , you would like to switch off sharing calculations, then do all the changes and after that switch on calculations again.
+
+
+~~~~~~
