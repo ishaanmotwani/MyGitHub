@@ -1,0 +1,7 @@
+Roshni is highly experienced in Predictive analytics and Statistical Modelling. She is very driven and a fast learner and has successfully worked on standalone projects and also lead a team of 4.
+
+General : 
+Roshni has 3 years of hands-on experience working on standalone and team projects in Data Science using Python. She has worked on Recommender systems based on collaborative filtering, Image caption generation using LSTMs, Random Forests, training image bounding box classifier using YOLO darknet on AWS EC2 and other regression and classification projects. She is a passionate learner and quick to adapt to new environments.
+
+
+Bharani Deekshit for referral update
